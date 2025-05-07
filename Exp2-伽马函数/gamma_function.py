@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 # from scipy.integrate import quad
 # TODO: 导入可能需要的数学函数 (例如: from math import ...)
 # from math import factorial, sqrt, pi, exp, log
-
+from scipy.integrate import quad
+from math import factorial, sqrt, pi, exp, log
 # --- Task 1: 绘制被积函数 ---
 
 def integrand_gamma(x, a):
@@ -33,13 +34,23 @@ def integrand_gamma(x, a):
 
     if x == 0:
         # TODO: 处理 x=0 的情况 (考虑 a>1, a=1, a<1)
-        pass # Placeholder
+        # Placeholder
+        if a > 1:
+            return 0.0
+        elif a == 1:
+            return 1.0
+        else:  # a < 1
+            return np.inf
     elif x > 0:
         # TODO: 计算 x > 0 的情况，建议使用 log/exp 技巧
         try:
             # log_f = ...
             # return exp(log_f)
-            pass # Placeholder
+            # Placeholder
+            log_f = (a-1)*log(x) - x
+            return exp(log_f)
+        except ValueError:
+            return np.nan
         except ValueError:
             return np.nan # 处理可能的计算错误
     else: # 理论上不会进入这里
@@ -62,13 +73,17 @@ def plot_integrands():
 
         # TODO: 绘制曲线 plt.plot(...)
         # plt.plot(x_vals, y_vals, label=f'$a = {a_val}$')
-
+        plt.plot(x_vals, y_vals, label=f'$a = {a_val}$')
         # TODO: (可选) 标记理论峰值位置 x = a-1
         # peak_x = a_val - 1
         # if peak_x > 0:
         #    peak_y = integrand_gamma(peak_x, a_val)
         #    plt.plot(peak_x, peak_y, 'o', ms=5)
-
+        peak_x = a_val - 1
+        if peak_x > 0:
+            peak_y = integrand_gamma(peak_x, a_val)
+            plt.plot(peak_x, peak_y, 'o', ms=5)
+   
     plt.xlabel("$x$")
     plt.ylabel("$f(x, a) = x^{a-1} e^{-x}$")
     plt.title("Integrand of the Gamma Function")
