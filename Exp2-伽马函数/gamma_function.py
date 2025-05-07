@@ -148,11 +148,19 @@ def transformed_integrand_gamma(z, a):
     # TODO: 计算 dxdz = c / (1-z)**2
     x = 0 # Placeholder
     dxdz = 0 # Placeholder
-
+    x = c*z / (1-z)
+    dxdz = c / (1-z)**2
     # TODO: 计算 f(x, a) * dx/dz，调用 integrand_gamma(x, a)
     val_f = 0 # Placeholder
     result = val_f * dxdz
-
+    if x == 0:
+        return 0.0
+    
+    try:
+        log_f = (a-1)*log(x) - x
+        val_f = exp(log_f)
+    except ValueError:
+        return 0.0
     # 检查结果是否有效
     if not np.isfinite(result):
         return 0.0 # 或 np.nan
@@ -185,11 +193,13 @@ def gamma_function(a):
         if a > 1.0:
             # TODO: 使用数值积分计算变换后的积分从 0 到 1
             # integral_value, error = quad(transformed_integrand_gamma, 0, 1, args=(a,))
-            pass # Placeholder
+            # Placeholder
+            integral_value, error = quad(transformed_integrand_gamma, 0, 1, args=(a,))
         else: # a <= 1
             # TODO: 使用数值积分计算原始积分从 0 到 inf
             # integral_value, error = quad(integrand_gamma, 0, np.inf, args=(a,))
-            pass # Placeholder
+            # Placeholder
+            integral_value, error = quad(integrand_gamma, 0, np.inf, args=(a,))
 
         # print(f"Integration error estimate for a={a}: {error}") # Optional: print error
         return integral_value
