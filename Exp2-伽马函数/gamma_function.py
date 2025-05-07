@@ -29,8 +29,7 @@ def integrand_gamma(x, a):
         - 对于 x > 0, 考虑使用 exp((a-1)*log(x) - x) 来提高数值稳定性。
     """
     # TODO: 实现被积函数的计算逻辑
-    if x < 0:
-        return 0.0 # 或者抛出错误，因为积分区间是 [0, inf)
+    # 或者抛出错误，因为积分区间是 [0, inf)
 
     if x == 0:
         # TODO: 处理 x=0 的情况 (考虑 a>1, a=1, a<1)
@@ -48,14 +47,13 @@ def integrand_gamma(x, a):
             # return exp(log_f)
             # Placeholder
             log_f = (a-1)*log(x) - x
-            return exp(log_f)
+            return np.exp(log_f)
         except ValueError:
-            return np.nan # 处理可能的计算错误
-    else: # 理论上不会进入这里
-        return np.nan
-
-    # 临时返回值，需要替换
-    return 0.0
+            # 如果 x 非常小导致 log(x) 问题（理论上不应发生，因已处理x=0）
+            return 0.0 # 或根据情况返回 np.nan
+    # 处理 x < 0 的情况 (积分区间是 [0, inf)，理论上不应输入负数)
+    else:
+        return 0.0 # 或者抛出错误
 
 
 def plot_integrands():
@@ -63,12 +61,12 @@ def plot_integrands():
     x_vals = np.linspace(0.01, 10, 400) # 从略大于0开始
     plt.figure(figsize=(10, 6))
 
-    print("绘制被积函数图像...")
     for a_val in [2, 3, 4]:
         print(f"  计算 a = {a_val}...")
         # TODO: 计算 y_vals = [integrand_gamma(x, a_val) for x in x_vals]
         y_vals = np.zeros_like(x_vals) # Placeholder
-
+        valid_indices = np.isfinite(y_vals)
+        plt.plot(x_vals[valid_indices], y_vals[valid_indices], label=f'$a = {a_val}$')
         # TODO: 绘制曲线 plt.plot(...)
         # plt.plot(x_vals, y_vals, label=f'$a = {a_val}$')
         plt.plot(x_vals, y_vals, label=f'$a = {a_val}$')
@@ -80,7 +78,7 @@ def plot_integrands():
         peak_x = a_val - 1
         if peak_x > 0:
             peak_y = integrand_gamma(peak_x, a_val)
-            plt.plot(peak_x, peak_y, 'o', ms=5)
+            plt.plot(peak_x, peak_y, 'o', ms=5, label=f'Peak at x={peak_x}' if a_val==2 else None)
    
     plt.xlabel("$x$")
     plt.ylabel("$f(x, a) = x^{a-1} e^{-x}$")
@@ -134,14 +132,17 @@ def transformed_integrand_gamma(z, a):
         # 或者，如果 gamma_function 保证只在 a>1 时调用此函数，则这里可以假设 c>0。
         # return 0.0 # 临时处理
         # 假设调用者保证 a > 1
-        if a <= 1: # 增加一个检查
-             print(f"警告: transformed_integrand_gamma 假定 a > 1，但接收到 a={a}")
-             return np.nan # 或者抛出错误
+        return 0.0
+        
 
     # 处理 z 的边界
-    if z < 0 or z > 1: return 0.0
-    if z == 1: return 0.0 # 对应 x=inf
-
+    if z < 0 or z > 1: # 积分区间外
+        return 0.0
+    if z == 1: # 对应 x = inf, 极限应为 0
+        return 0.0
+    if z == 0: # 对应 x = 0
+        # 使用原始被积函数在 x=0 的行为
+        return integrand_gamma(0, a) * c # dx/dz 在 z=0 时为 c
     # TODO: 计算 x = c*z / (1-z)
     # TODO: 计算 dxdz = c / (1-z)**2
     x = 0 # Placeholder
@@ -149,21 +150,13 @@ def transformed_integrand_gamma(z, a):
     x = c*z / (1-z)
     dxdz = c / (1-z)**2
     # TODO: 计算 f(x, a) * dx/dz，调用 integrand_gamma(x, a)
-    val_f = 0 # Placeholder
-    result = val_f * dxdz
-    if x == 0:
-        return 0.0
+    val_f = integrand_gamma(x, a)
     
-    try:
-        log_f = (a-1)*log(x) - x
-        val_f = exp(log_f)
-    except ValueError:
-        return 0.0
     # 检查结果是否有效
     if not np.isfinite(result):
         return 0.0 # 或 np.nan
 
-    return result
+    return val_f * dxdz
 
 def gamma_function(a):
     """
