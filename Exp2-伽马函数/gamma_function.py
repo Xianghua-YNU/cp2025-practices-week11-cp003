@@ -153,8 +153,9 @@ def transformed_integrand_gamma(z, a):
     val_f = integrand_gamma(x, a)
     
     # 检查结果是否有效
-    if not np.isfinite(result):
-        return 0.0 # 或 np.nan
+    if not np.isfinite(val_f) or not np.isfinite(dxdz):
+        # 如果出现 inf 或 nan，可能表示数值问题或 a<=1 的情况处理不当
+        return 0.0 # 返回0避免破坏积分
 
     return val_f * dxdz
 
