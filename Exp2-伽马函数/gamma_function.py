@@ -203,44 +203,32 @@ def gamma_function(a):
 if __name__ == "__main__":
     # --- Task 1 ---
     print("--- Task 1: 绘制被积函数 ---")
-    # plot_integrands() # 取消注释以执行绘图
     plot_integrands()
+
     # --- Task 2 & 3 ---
     print("\n--- Task 2 & 3: 解析推导见代码注释/报告 ---")
-    # (确保注释或报告中有推导)
 
     # --- Task 4 ---
     print("\n--- Task 4: 测试 Gamma(1.5) ---")
     a_test = 1.5
-    # TODO: 调用 gamma_function 计算 gamma_calc
-    gamma_calc = 0.0 # Placeholder
-    # TODO: 计算精确值 gamma_exact = 0.5 * sqrt(pi)
-    gamma_exact = 0.0 # Placeholder
+    gamma_calc = gamma_function(a_test)
+    gamma_exact = 0.5 * sqrt(pi)
     print(f"计算值 Gamma({a_test}) = {gamma_calc:.8f}")
     print(f"精确值 sqrt(pi)/2 = {gamma_exact:.8f}")
-    # TODO: 计算并打印相对误差
-    # if gamma_exact != 0:
-    #     relative_error = abs(gamma_calc - gamma_exact) / abs(gamma_exact)
-    #     print(f"相对误差 = {relative_error:.4e}")
     if gamma_exact != 0:
         relative_error = abs(gamma_calc - gamma_exact) / abs(gamma_exact)
         print(f"相对误差 = {relative_error:.4e}")
+
     # --- Task 5 ---
     print("\n--- Task 5: 测试整数 Gamma(a) = (a-1)! ---")
     for a_int in [3, 6, 10]:
         print(f"\n计算 Gamma({a_int}):")
-        # TODO: 调用 gamma_function 计算 gamma_int_calc
-        gamma_int_calc = 0.0 # Placeholder
-        # TODO: 计算精确值 exact_factorial = float(factorial(a_int - 1))
-        exact_factorial = 0.0 # Placeholder
+        gamma_int_calc = gamma_function(a_int)
+        exact_factorial = float(factorial(a_int - 1))
         print(f"  计算值 = {gamma_int_calc:.8f}")
         print(f"  精确值 ({a_int-1}!) = {exact_factorial:.8f}")
-        # TODO: 计算并打印相对误差
-        # if exact_factorial != 0:
-        #     relative_error_int = abs(gamma_int_calc - exact_factorial) / abs(exact_factorial)
-        #     print(f"  相对误差 = {relative_error_int:.4e}")
         if exact_factorial != 0:
             relative_error_int = abs(gamma_int_calc - exact_factorial) / abs(exact_factorial)
             print(f"  相对误差 = {relative_error_int:.4e}")
-    # --- 显示图像 ---
-    # plt.show() # 取消注释以显示 Task 1 的图像
+
+    plt.show()
