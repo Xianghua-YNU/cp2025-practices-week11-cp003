@@ -50,8 +50,6 @@ def integrand_gamma(x, a):
             log_f = (a-1)*log(x) - x
             return exp(log_f)
         except ValueError:
-            return np.nan
-        except ValueError:
             return np.nan # 处理可能的计算错误
     else: # 理论上不会进入这里
         return np.nan
