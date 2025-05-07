@@ -47,7 +47,7 @@ def calculate_potential_on_grid(y_coords, z_coords):
     # 对 phi 进行积分 (使用梯形法则)
     # np.trapezoid 默认沿最后一个轴积分
     # dx 是积分步长，这里取相邻 phi 点的间距
-    V = np.trapezoid(dV, dx=phi_grid[0,0,1]-phi_grid[0,0,0], axis=-1)
+    V = np.trapz(dV, dx=phi_grid[0,0,1]-phi_grid[0,0,0], axis=-1)
     return V, y_grid[:,:,0], z_grid[:,:,0] # 返回 V 和对应的 y, z 网格
 
 def calculate_electric_field_on_grid(V, y_coords, z_coords):
