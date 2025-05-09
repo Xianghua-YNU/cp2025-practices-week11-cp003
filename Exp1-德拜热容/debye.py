@@ -10,56 +10,44 @@ rho = 6.022e28  # 原子数密度，单位：m^-3
 theta_D = 428  # 德拜温度，单位：K
 
 def integrand(x):
-    """被积函数：x^4 * e^x / (e^x - 1)^2
-    
-    参数：
-    x : float 或 numpy.ndarray
-        积分变量
-    
-    返回：
-    float 或 numpy.ndarray：被积函数的值
-    """
-    # 在这里实现被积函数
-    pass
+    """被积函数：x^4 * e^x / (e^x - 1)^2"""
+    with np.errstate(over='ignore'):
+        ex = np.exp(x)
+    return (x**4 * ex) / (ex - 1)**2
 
 def gauss_quadrature(f, a, b, n):
-    """实现高斯-勒让德积分
-    
-    参数：
-    f : callable
-        被积函数
-    a, b : float
-        积分区间的端点
-    n : int
-        高斯点的数量
-    
-    返回：
-    float：积分结果
-    """
-    # 在这里实现高斯积分
-    pass
+    """实现高斯-勒让德积分"""
+    x, w = np.polynomial.legendre.leggauss(n)  # 获取 n 个点的节点和权重（区间为 [-1, 1]）
+    # 映射到 [a, b]
+    t = 0.5 * (b - a) * x + 0.5 * (b + a)
+    return 0.5 * (b - a) * np.sum(w * f(t))
 
 def cv(T):
-    """计算给定温度T下的热容
-    
-    参数：
-    T : float
-        温度，单位：K
-    
-    返回：
-    float：热容值，单位：J/K
-    """
-    # 在这里实现热容计算
-    pass
+    """计算给定温度T下的热容"""
+    if T == 0:
+        return 0.0
+    x_max = theta_D / T
+    integral = gauss_quadrature(integrand, 0, x_max, 100)
+    C = 9 * V * rho * kB * (T / theta_D)**3 * integral
+    return C
 
 def plot_cv():
     """绘制热容随温度的变化曲线"""
-    # 在这里实现绘图功能
-    pass
+    T_values = np.linspace(1, 600, 300)
+    Cv_values = [cv(T) for T in T_values]
+    
+    plt.figure(figsize=(8, 5))
+    plt.plot(T_values, Cv_values, label="Debye Heat Capacity")
+    plt.xlabel("Temperature (K)")
+    plt.ylabel("Heat Capacity (J/K)")
+    plt.title("Debye Model: Heat Capacity vs Temperature")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 def test_cv():
     """测试热容计算函数"""
-    # 测试一些特征温度点的热容值
     test_temperatures = [5, 100, 300, 500]
     print("\n测试不同温度下的热容值：")
     print("-" * 40)
@@ -70,10 +58,7 @@ def test_cv():
         print(f"{T:8.1f}\t{result:10.3e}")
 
 def main():
-    # 运行测试
     test_cv()
-    
-    # 绘制热容曲线
     plot_cv()
 
 if __name__ == '__main__':
